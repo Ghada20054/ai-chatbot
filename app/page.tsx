@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Send, Settings, X } from 'lucide-react';
 
+
 export default function MinimalistAIChat() {
   // We initialize the state with the exact conversation from your image
   const [messages, setMessages] = useState([
@@ -23,15 +24,17 @@ export default function MinimalistAIChat() {
   
   const [inputValue, setInputValue] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
-const scrollRef = useRef<HTMLDivElement | null>(null);
-  // Keeps the chat scrolled to the bottom
-  useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }
-  }, [messages]);
 
-  const handleSendMessage = (e) => {
+const scrollRef = useRef<HTMLDivElement | null>(null);
+// Keeps the chat scrolled to the bottom
+useEffect(() => {
+  const el = scrollRef.current;
+  if (!el) return;
+
+  el.scrollTop = el.scrollHeight;
+}, [messages]);
+
+  const handleSendMessage = (e: { preventDefault: () => void; }) => {
     e?.preventDefault();
     if (!inputValue.trim()) return;
 
