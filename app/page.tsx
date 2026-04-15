@@ -25,8 +25,7 @@ export default function MinimalistAIChat() {
   const [inputValue, setInputValue] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-const scrollRef = useRef<HTMLDivElement | null>(null);
-// Keeps the chat scrolled to the bottom
+const scrollRef = useRef<HTMLDivElement>(null!);// Keeps the chat scrolled to the bottom
 useEffect(() => {
   const el = scrollRef.current;
   if (!el) return;
