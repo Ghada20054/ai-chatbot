@@ -22,14 +22,49 @@ export default function MinimalistAIChat() {
 
   const [inputValue, setInputValue] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const handleSendMessage = (e: { preventDefault: () => void }) => {
-    e?.preventDefault();
+  const handleSendMessage = async (e: React.FormEvent) => {
+    e.preventDefault();
+
     if (!inputValue.trim()) return;
 
-    const newMessage = { id: Date.now(), role: 'user', text: inputValue };
-    setMessages((prev) => [...prev, newMessage]);
+    const userMessage = {
+      id: Date.now(),
+      role: 'user',
+      text: inputValue,
+    };
+
+    // أضف رسالة المستخدم فورًا
+    setMessages((prev) => [...prev, userMessage]);
+
+    const currentInput = inputValue;
     setInputValue('');
+    setLoading(true);
+
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message: currentInput }),
+      });
+
+      const data = await res.json();
+
+      const botMessage = {
+        id: Date.now() + 1,
+        role: 'assistant',
+        text: data.reply,
+      };
+
+      setMessages((prev) => [...prev, botMessage]);
+    } catch (error) {
+      console.error('Error:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -69,6 +104,11 @@ export default function MinimalistAIChat() {
             </div>
           </div>
         ))}
+
+        {/* Loading indicator (بدون تغيير UI) */}
+        {loading && (
+          <div className="text-sm text-gray-400">Thinking...</div>
+        )}
       </main>
 
       {/* Input */}
